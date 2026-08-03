@@ -92,6 +92,11 @@
     els.favsToggle.addEventListener("click", () => {
       state.favsOnly = !state.favsOnly;
       els.favsToggle.classList.toggle("active", state.favsOnly);
+      els.favsToggle.setAttribute("aria-pressed", String(state.favsOnly));
+      if (state.favsOnly && state.category !== "all") {
+        state.category = "all";
+        renderCategories();
+      }
       renderTools();
     });
 
@@ -99,6 +104,11 @@
       const btn = e.target.closest("[data-cat]");
       if (!btn) return;
       state.category = btn.dataset.cat;
+      if (state.favsOnly) {
+        state.favsOnly = false;
+        els.favsToggle.classList.remove("active");
+        els.favsToggle.setAttribute("aria-pressed", "false");
+      }
       renderCategories();
       renderTools();
     });
