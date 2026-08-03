@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown } from "lucide-vue-next";
+import { ChevronDown, Star } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import {
   INTERVIEW_DIFFICULTIES,
@@ -8,6 +8,7 @@ import {
   type InterviewDifficulty,
   type InterviewTopic,
 } from "../data/interview";
+import CodeBlock from "../components/CodeBlock.vue";
 
 type DifficultyFilter = "all" | InterviewDifficulty;
 type TopicFilter = "all" | InterviewTopic;
@@ -106,6 +107,7 @@ function difficultyClass(key: InterviewDifficulty): string {
         :class="{ active: topicFilter === t.key }"
         @click="topicFilter = t.key"
       >
+        <Star v-if="t.featured" class="chip-star" :size="13" fill="currentColor" />
         {{ t.label }}
       </button>
     </div>
@@ -130,6 +132,7 @@ function difficultyClass(key: InterviewDifficulty): string {
         </button>
         <div v-show="expanded.has(q.id)" class="qa-answer">
           {{ q.answer }}
+          <CodeBlock v-if="q.code" :lang="q.code.lang" :source="q.code.source" />
         </div>
       </article>
 
@@ -227,6 +230,9 @@ function difficultyClass(key: InterviewDifficulty): string {
 }
 
 .topic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   height: 32px;
   padding: 0 13px;
   border: 1px solid var(--border);
@@ -246,6 +252,10 @@ function difficultyClass(key: InterviewDifficulty): string {
   border-color: var(--primary);
   background: var(--primary-soft);
   color: var(--primary-ink);
+}
+
+.chip-star {
+  color: #f59e0b;
 }
 
 .result-summary {

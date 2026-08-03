@@ -28,4 +28,20 @@ describe("面试题数据完整性", () => {
       expect(INTERVIEW_QUESTIONS.filter((q) => q.difficulty === d.key).length, d.label).toBeGreaterThan(0);
     }
   });
+
+  it("Flutter 题库充足且各难度均衡", () => {
+    const flutter = INTERVIEW_QUESTIONS.filter((q) => q.topic === "flutter");
+    expect(flutter.length).toBeGreaterThanOrEqual(20);
+    for (const d of INTERVIEW_DIFFICULTIES) {
+      expect(flutter.filter((q) => q.difficulty === d.key).length, `Flutter ${d.label}`).toBeGreaterThanOrEqual(5);
+    }
+  });
+
+  it("代码示例字段完整", () => {
+    const withCode = INTERVIEW_QUESTIONS.filter((q) => q.code);
+    expect(withCode.length).toBeGreaterThan(5);
+    for (const q of withCode) {
+      expect(q.code!.lang.length > 0 && q.code!.source.length > 0, `${q.id} 代码示例不完整`).toBe(true);
+    }
+  });
 });

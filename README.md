@@ -1,6 +1,6 @@
 # AI 应用导航
 
-一个纯前端 AI 导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序与收藏；内置模型能力排名、前端/Flutter 面试题库（由浅入深）与 Vibe Coding 指南页面。
+一个纯前端 AI 导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序与收藏；内置模型能力排名、前端/Flutter 面试题库（53 题、由浅入深、含代码示例）与 Vibe Coding 指南页面。
 
 ## 技术栈
 
@@ -107,9 +107,10 @@ ai-nav/
 ### 维护面试题
 
 1. 编辑 `src/data/interview.ts` 中的 `INTERVIEW_QUESTIONS`；
-2. 每条记录包含 `difficulty`（基础/进阶/深入）与 `topic`（HTML/CSS、JavaScript、Vue/React、浏览器、工程与性能、Flutter），题目与答案都必填；
+2. 每条记录包含 `difficulty`（基础/进阶/深入）与 `topic`（HTML/CSS、JavaScript、Vue/React、浏览器、工程与性能、Flutter），题目与答案都必填；需要贴代码时添加 `code: { lang, source }`（支持 dart / js / ts / html / css / bash），页面会自动高亮渲染；
 3. 页面默认按难度“由浅入深”排序，新增题目无需调整顺序；
-4. 运行 `npm run check` 校验 id 唯一、难度/主题引用有效。
+4. Flutter 主题在筛选标签上带星标标识，题库已覆盖基础/进阶/深入各 10 题；
+5. 运行 `npm run check` 校验 id 唯一、难度/主题引用有效、代码示例完整。
 
 ### 维护 Vibe Coding 指南
 

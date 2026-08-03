@@ -12,6 +12,14 @@ export type InterviewTopic =
   | "engineering"
   | "flutter";
 
+/** 代码示例语言（对应 highlight.js 注册的语言） */
+export type CodeLang = "dart" | "js" | "ts" | "html" | "css" | "bash";
+
+export interface InterviewCode {
+  lang: CodeLang;
+  source: string;
+}
+
 export const INTERVIEW_DIFFICULTIES: {
   key: InterviewDifficulty;
   label: string;
@@ -22,13 +30,13 @@ export const INTERVIEW_DIFFICULTIES: {
   { key: "advanced", label: "深入", order: 3 },
 ];
 
-export const INTERVIEW_TOPICS: { key: InterviewTopic; label: string }[] = [
+export const INTERVIEW_TOPICS: { key: InterviewTopic; label: string; featured?: boolean }[] = [
   { key: "html-css", label: "HTML/CSS" },
   { key: "javascript", label: "JavaScript" },
   { key: "framework", label: "Vue/React" },
   { key: "browser", label: "浏览器" },
   { key: "engineering", label: "工程与性能" },
-  { key: "flutter", label: "Flutter" },
+  { key: "flutter", label: "Flutter", featured: true },
 ];
 
 export interface InterviewQuestion {
@@ -37,6 +45,7 @@ export interface InterviewQuestion {
   topic: InterviewTopic;
   question: string;
   answer: string;
+  code?: InterviewCode;
 }
 
 export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
@@ -80,6 +89,17 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "什么是闭包？它的作用与潜在风险是什么？",
     answer:
       "闭包是函数与其定义时所在词法作用域的引用组合，使内部函数能访问外部函数变量。用途：封装私有变量、柯里化、防抖节流、模块模式。风险：闭包长期持有外部变量引用，若未及时释放可能导致内存泄漏。",
+    code: {
+      lang: "js",
+      source: `function makeCounter() {
+  let count = 0;            // 外部函数变量
+  return () => ++count;     // 内部函数捕获它，形成闭包
+}
+
+const counter = makeCounter();
+counter(); // 1
+counter(); // 2`,
+    },
   },
   {
     id: "basic-event-loop",
@@ -88,6 +108,16 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "介绍一下 JavaScript 的事件循环机制。",
     answer:
       "JS 是单线程的，通过事件循环调度异步任务。执行栈中的同步代码跑完后，先清空微任务队列（Promise.then、queueMicrotask、MutationObserver），再取一个宏任务执行（setTimeout、setInterval、事件回调、I/O），宏任务执行完再清空微任务，循环往复。",
+    code: {
+      lang: "js",
+      source: `console.log("1"); // 同步
+
+setTimeout(() => console.log("2"), 0); // 宏任务
+
+Promise.resolve().then(() => console.log("3")); // 微任务
+
+// 输出顺序: 1 -> 3 -> 2`,
+    },
   },
   {
     id: "basic-vif-vshow",
@@ -112,6 +142,27 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "StatelessWidget 与 StatefulWidget 的区别？",
     answer:
       "StatelessWidget 没有内部可变状态，build 只依赖外部传入参数，重建时直接重新构建；StatefulWidget 持有一个 State 对象，可跨帧保存数据，并调用 setState 标记重建。原则：能用无状态就不用有状态，状态尽量下放到需要它的子树。",
+    code: {
+      lang: "dart",
+      source: `class Counter extends StatefulWidget {
+  const Counter({super.key});
+
+  @override
+  State<Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => setState(() => _count++),
+      child: Text('\$_count'),
+    );
+  }
+}`,
+    },
   },
   {
     id: "basic-runapp",
@@ -130,6 +181,29 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "防抖与节流有什么区别？分别适合什么场景？",
     answer:
       "防抖：事件持续触发时不断重置计时器，停止触发 N 毫秒后才执行一次，适合搜索输入、窗口 resize 的收尾操作；节流：固定时间间隔内最多执行一次，适合滚动、拖拽等高频事件。实现都基于定时器或时间戳记录。",
+    code: {
+      lang: "js",
+      source: `// 防抖：停止触发 delay 后才执行
+function debounce(fn, delay = 300) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// 节流：interval 内最多执行一次
+function throttle(fn, interval = 300) {
+  let last = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - last >= interval) {
+      last = now;
+      fn(...args);
+    }
+  };
+}`,
+    },
   },
   {
     id: "adv-async-await",
@@ -138,6 +212,22 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "async/await 与 Promise 的关系？错误处理有什么注意点？",
     answer:
       "async 函数总是返回 Promise；await 等价于 then 的语法糖，会暂停函数执行直到 Promise 落定。注意：多个互不依赖的异步任务要用 Promise.all 并行，而不是逐个 await；错误处理用 try/catch 或 .catch，漏接的 rejected Promise 会成为未处理异常。",
+    code: {
+      lang: "js",
+      source: `// 串行（慢）：逐个等待
+const a = await fetchA();
+const b = await fetchB();
+
+// 并行（快）：互不依赖的任务一起发
+const [a2, b2] = await Promise.all([fetchA(), fetchB()]);
+
+// 错误处理
+try {
+  const data = await fetchData();
+} catch (err) {
+  console.error(err);
+}`,
+    },
   },
   {
     id: "adv-deep-clone",
@@ -146,6 +236,21 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "实现深拷贝需要考虑哪些问题？",
     answer:
       "要处理：循环引用（用 WeakMap 缓存已拷贝对象）、区分数组/普通对象/Date/RegExp/Map/Set、Symbol 键与函数、原型丢失等。日常可直接用 structuredClone（支持循环引用和多数内置类型，但不能拷贝函数与 DOM）；JSON.parse(JSON.stringify()) 会丢 undefined、函数、Symbol 并报错于循环引用。",
+    code: {
+      lang: "js",
+      source: `function deepClone(value, cache = new WeakMap()) {
+  if (value === null || typeof value !== "object") return value;
+  if (cache.has(value)) return cache.get(value); // 循环引用
+
+  const clone = Array.isArray(value) ? [] : {};
+  cache.set(value, clone);
+
+  for (const key of Reflect.ownKeys(value)) {
+    clone[key] = deepClone(value[key], cache);
+  }
+  return clone;
+}`,
+    },
   },
   {
     id: "adv-url-to-page",
@@ -202,6 +307,13 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "setState 做了什么？BuildContext 的用途是什么？",
     answer:
       "setState 把当前 Element 标记为 dirty，并调度到下一帧重建该子树（build 阶段）。BuildContext 本质是 Element 的句柄，用于向上查找祖先，如 Theme、MediaQuery、Navigator、InheritedWidget，是组件访问全局上下文信息的主要途径。",
+    code: {
+      lang: "dart",
+      source: `setState(() {
+  _name = "new name"; // 修改状态
+});
+// 标记 dirty 后，本帧会重新执行 build`,
+    },
   },
 
   // ---------- 深入 ----------
@@ -284,5 +396,374 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
     question: "Flutter 的 Isolate 与事件循环是什么关系？",
     answer:
       "Isolate 是 Dart 的并发单元，每个 Isolate 拥有独立内存和独立事件循环，通过 SendPort/ReceivePort 传递消息，不能共享变量。主 Isolate 负责 UI，耗时计算放到后台 Isolate（compute 是便捷封装）；async/await 则在单个 Isolate 内基于事件循环实现非阻塞等待。",
+    code: {
+      lang: "dart",
+      source: `// compute 在后台 isolate 执行耗时任务，不阻塞 UI
+final result = await compute(heavyTask, 1000000);
+
+int heavyTask(int n) {
+  var sum = 0;
+  for (var i = 0; i < n; i++) {
+    sum += i;
+  }
+  return sum;
+}`,
+    },
+  },
+
+  // ---------- 基础（Flutter 补充） ----------
+  {
+    id: "basic-flutter-what",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "什么是 Flutter？它与 React Native 的核心区别是什么？",
+    answer:
+      "Flutter 是 Google 的开源跨平台 UI 框架，使用 Dart 语言，一套代码可运行在 Android、iOS、Web、桌面等平台。核心区别：Flutter 自带渲染引擎（Skia/Impeller），UI 直接绘制到画布，不依赖原生控件，跨平台表现一致；React Native 通过 JS 桥接调用原生控件，视觉与行为依赖各平台组件。",
+  },
+  {
+    id: "basic-flutter-everything-widget",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "为什么说 Flutter 里“一切皆 Widget”？",
+    answer:
+      "Widget 是 Flutter UI 的最小描述单元：组件、布局、手势、主题、路由、动画等都以 Widget 形式存在。页面是一棵 Widget 树，通过组合（嵌套）而不是继承来构建界面，每个 Widget 只负责描述配置，由框架渲染成真实 UI。",
+  },
+  {
+    id: "basic-flutter-build",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "build() 方法的作用是什么？什么时候会被调用？",
+    answer:
+      "build 根据当前 Widget 与 State 返回子树描述（构建子 widget 树）。调用时机：首次挂载、setState 之后、父级 rebuild 且需要更新、依赖的 InheritedWidget 变化时。build 应保持纯函数：不做耗时计算、不发起网络请求，只负责返回 widget。",
+    code: {
+      lang: "dart",
+      source: `@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text(title)),
+    body: Center(child: Text('Hello, Flutter')),
+  );
+}`,
+    },
+  },
+  {
+    id: "basic-dart-null-safety",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "Dart 空安全是什么？?、!、late 分别怎么用？",
+    answer:
+      "空安全让类型系统在编译期区分可空（int?）与不可空（int）类型，默认变量不可为空，从源头减少空指针。? 声明可空类型；! 是非空断言（开发者保证不为空，用错运行时抛错）；late 表示延迟初始化：声明时不必赋值，首次访问时才初始化，常用于无法立即赋值的非空字段。",
+    code: {
+      lang: "dart",
+      source: `int? maybeNull;      // 可空
+maybeNull = 42;
+
+String name = maybeNull!.toString(); // 非空断言
+
+late final String lazy = compute();  // 首次访问时才执行`,
+    },
+  },
+  {
+    id: "basic-dart-final-const",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "final 与 const 有什么区别？",
+    answer:
+      "final 是运行期一次性赋值，之后不可改变；const 是编译期常量，值在编译时确定，且 const 对象会被规范化（canonicalize），相同内容复用同一实例。const 的要求更严格：所有字段都必须是编译期可知的常量。",
+    code: {
+      lang: "dart",
+      source: `const pi = 3.14159;         // 编译期常量
+final now = DateTime.now();    // 运行期赋值一次
+
+const list = [1, 2, 3];       // 编译期确定的不可变列表`,
+    },
+  },
+  {
+    id: "basic-flutter-keys",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "Flutter 中的 Key 是什么？什么时候必须使用？",
+    answer:
+      "Key 用于在同层级子组件中唯一标识 Element，帮助 diff 阶段正确复用和匹配状态。当列表会增删、排序，或同一父级下出现多个同类型 Widget 时，需要稳定 Key 防止状态串位。常见类型：ValueKey、ObjectKey、UniqueKey、GlobalKey。",
+    code: {
+      lang: "dart",
+      source: `ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, i) => TodoTile(
+    key: ValueKey(items[i].id), // 稳定 key
+    todo: items[i],
+  ),
+)`,
+    },
+  },
+  {
+    id: "basic-flutter-lifecycle",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "StatefulWidget 的状态生命周期是怎样的？",
+    answer:
+      "createState 创建 State → initState（只执行一次，初始化资源、注册监听）→ didChangeDependencies（首次 build 前调用，依赖的 InheritedWidget 变化时再次调用）→ build → didUpdateWidget（父级传新配置时调用）→ deactivate → dispose（释放资源、移除监听）。setState 则在任意时刻标记重建。",
+    code: {
+      lang: "dart",
+      source: `@override
+void initState() {
+  super.initState();
+  _controller.addListener(_onTick); // 初始化资源
+}
+
+@override
+void dispose() {
+  _controller.removeListener(_onTick); // 释放资源
+  super.dispose();
+}`,
+    },
+  },
+  {
+    id: "basic-flutter-layout-widgets",
+    difficulty: "basic",
+    topic: "flutter",
+    question: "常见的布局 Widget 有哪些？分别怎么用？",
+    answer:
+      "Row/Column：线性布局，用 mainAxisAlignment 控制主轴、crossAxisAlignment 控制交叉轴；Stack：层叠布局，配合 Positioned 定位；Container：容器，提供装饰、边距与约束；Expanded/Flexible：在 Flex 中分配剩余空间；ListView/GridView：滚动列表。掌握这几个即可覆盖绝大多数布局需求。",
+    code: {
+      lang: "dart",
+      source: `Row(
+  children: [
+    Expanded(child: Panel(title: 'A')),
+    const SizedBox(width: 12),
+    Expanded(flex: 2, child: Panel(title: 'B')),
+  ],
+)`,
+    },
+  },
+
+  // ---------- 进阶（Flutter 补充） ----------
+  {
+    id: "adv-flutter-state-classes",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Flutter 中状态分哪几类？什么是状态提升？",
+    answer:
+      "状态分两类：ephemeral（局部状态，如开关、输入框，用 setState 管理）与 app state（跨页面共享、需要持久化的业务状态，交给 Provider/Riverpod/Bloc）。状态提升：把多个子组件共享的状态放到最近的共同父组件，通过构造参数与回调下发，保证单一数据源。",
+    code: {
+      lang: "dart",
+      source: `class Parent extends StatefulWidget {
+  // 状态放在父级，由父级统一管理
+}
+
+class Child extends StatelessWidget {
+  final int count;
+  final VoidCallback onIncrement;
+  const Child({required this.count, required this.onIncrement, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(onPressed: onIncrement, child: Text('\$count'));
+  }
+}`,
+    },
+  },
+  {
+    id: "adv-flutter-navigator",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Navigator 的路由栈模型是怎样的？如何实现页面间传参？",
+    answer:
+      "Navigator 维护一个 Route 栈：push 压入新页面并播放过渡动画，pop 出栈返回上一页，pushReplacement 替换栈顶，pushNamed 走命名路由。传参方式：页面构造函数参数、命名路由的 arguments、pop 时携带返回值（pop(result)，由 push 的 Future 接收）。",
+    code: {
+      lang: "dart",
+      source: `// 打开详情页，等待返回结果
+final result = await Navigator.push<String>(
+  context,
+  MaterialPageRoute(builder: (_) => const DetailPage(item: item)),
+);
+
+// 详情页内返回结果
+Navigator.pop(context, "updated");`,
+    },
+  },
+  {
+    id: "adv-flutter-future-stream",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Future 与 Stream 有什么区别？各自适合什么场景？",
+    answer:
+      "Future 表示单个异步结果，最终 resolve 或 reject 一次，适合网络请求、文件读写；Stream 是异步事件序列，可多次产生数据，支持 listen、map、where 等操作，适合进度通知、WebSocket 消息、定时器。Stream 可以广播（broadcast）给多个订阅者。",
+    code: {
+      lang: "dart",
+      source: `// Future：一次结果
+Future<String> fetchData() async {
+  await Future.delayed(const Duration(milliseconds: 200));
+  return "data";
+}
+
+// Stream：多次事件
+final ticks = Stream.periodic(const Duration(seconds: 1), (i) => i);
+ticks.listen((v) => print('tick: \$v'));`,
+    },
+  },
+  {
+    id: "adv-flutter-changenotifier",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "ChangeNotifier 与 ValueNotifier 的作用是什么？",
+    answer:
+      "ChangeNotifier 是 Flutter 内置的可观察对象：addListener 注册监听，notifyListeners() 通知所有监听者；ValueNotifier<T> 是其子类，带 value 字段，给 value 赋值会自动通知。它们是 Provider 等状态管理库的底层机制，也适合替代 setState 做局部状态共享。",
+    code: {
+      lang: "dart",
+      source: `class CartModel extends ChangeNotifier {
+  final List<String> _items = [];
+  List<String> get items => List.unmodifiable(_items);
+
+  void add(String item) {
+    _items.add(item);
+    notifyListeners(); // 通知监听者
+  }
+}
+
+final cart = CartModel();
+cart.addListener(() => print(cart.items));`,
+    },
+  },
+  {
+    id: "adv-flutter-perf-basics",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "const 构造与 RepaintBoundary 对性能有什么影响？",
+    answer:
+      "const Widget 在编译期固定，重建时直接复用同一实例，跳过实例化与部分 diff 开销；RepaintBoundary 把子树隔离成独立图层，重绘只发生在该图层内，不重绘整页。适合：动画区域、频繁变化的列表项、昂贵绘制的内容。注意图层过多会增加 GPU 内存。",
+  },
+  {
+    id: "adv-flutter-animation",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Flutter 动画系统的基本组成是什么？",
+    answer:
+      "AnimationController 驱动动画进度（0-1，可 repeat/reverse，需要 vsync）；Tween 做数值插值（如 OffsetTween、ColorTween）；CurvedAnimation 定义缓动曲线；AnimatedBuilder/AnimatedWidget 监听动画变化并重建。隐式动画（AnimatedContainer 等）内部封装了这些机制，声明式使用更简单。",
+    code: {
+      lang: "dart",
+      source: `class _FadeState extends State<FadeBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 400),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose(); // 必须释放
+    super.dispose();
+  }
+}`,
+    },
+  },
+  {
+    id: "adv-flutter-platform-channel",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Flutter 如何与原生平台通信？",
+    answer:
+      "通过 Platform Channel：MethodChannel 做方法调用（双向）、EventChannel 接收原生事件流、BasicMessageChannel 发送任意消息。Dart 侧用 invokeMethod 调用原生方法，原生侧（Android/iOS）注册 MethodCallHandler 处理并返回结果。通道名需全局唯一。",
+    code: {
+      lang: "dart",
+      source: `static const _channel = MethodChannel("app/battery");
+
+Future<int> getBatteryLevel() async {
+  final level = await _channel.invokeMethod<int>("getBatteryLevel");
+  return level ?? 0;
+}`,
+    },
+  },
+  {
+    id: "adv-flutter-json",
+    difficulty: "intermediate",
+    topic: "flutter",
+    question: "Flutter 中 JSON 序列化怎么做？",
+    answer:
+      "简单场景用 jsonDecode 得到 Map，手写 fromJson/toJson 转换；模型较多时用 json_serializable 加 build_runner 自动生成。注意类型：JSON 数字是 num，需按字段转 int/double；嵌套对象与 List 要逐层转换。手写时保持字段名与后端契约一致。",
+    code: {
+      lang: "dart",
+      source: `class User {
+  final String name;
+  final int age;
+  const User(this.name, this.age);
+
+  factory User.fromJson(Map<String, dynamic> json) =>
+      User(json['name'] as String, json['age'] as int);
+
+  Map<String, dynamic> toJson() => {'name': name, 'age': age};
+}
+
+final user = User.fromJson(jsonDecode(raw) as Map<String, dynamic>);`,
+    },
+  },
+
+  // ---------- 深入（Flutter 补充） ----------
+  {
+    id: "hard-flutter-threads",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "Flutter 的 UI 线程与 Raster 线程如何分工？什么是 jank？",
+    answer:
+      "UI 线程（Dart isolate）执行 build、layout、paint，产出绘制指令；Raster 线程（Engine 原生线程）把指令栅格化并上屏，两者流水线并行。60fps 单帧预算约 16.6ms，UI 或 Raster 任一环节超时就会掉帧，即 jank。可通过 PerformanceOverlay、DevTools Timeline 观察瓶颈在哪个线程。",
+  },
+  {
+    id: "hard-flutter-engine-arch",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "Flutter 的三层架构（Embedder / Engine / Framework）分别负责什么？",
+    answer:
+      "Embedder（嵌入层）：平台适配，负责 Surface 创建、线程模型、事件循环接入，Android/iOS/Web 各自实现；Engine（引擎层）：C++ 实现，包含渲染（Skia/Impeller）、文字排版、Dart 运行时、Platform Channel；Framework（框架层）：Dart 编写，提供 Widgets、Rendering、Animation、Material/Cupertino 等 UI 库。",
+  },
+  {
+    id: "hard-flutter-skia-impeller",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "为什么 Flutter 自绘 UI 而不用原生控件？Skia 与 Impeller 是什么关系？",
+    answer:
+      "自绘保证跨平台渲染一致、动画流畅，不依赖各平台控件实现差异，也便于深度优化。Skia 是传统的 2D 图形库，Flutter 长期使用它，但 iOS 上首帧 shader 编译曾造成卡顿；Impeller 是 Flutter 自研的 GPU 渲染引擎，预编译 shader，解决了 iOS 首帧抖动问题，目前已是默认渲染后端，Skia 作为备用实现保留。",
+  },
+  {
+    id: "hard-flutter-custom-renderobject",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "什么时候需要自定义 RenderObject？",
+    answer:
+      "当组合现有 Widget 无法满足布局或绘制需求时：例如实现自定义布局算法（瀑布流、环形菜单）、对绘制性能有极高要求（直接操作 Canvas）、需要细粒度命中测试。做法：继承 RenderBox（或 RenderShiftedBox 等），重写 performLayout、size 计算与 paint；通常配合自定义 RenderObjectWidget 使用。",
+  },
+  {
+    id: "hard-flutter-globalkey",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "GlobalKey 的用途是什么？使用时要注意什么？",
+    answer:
+      "GlobalKey 全局唯一，可在树中跨层级访问对应的 Element 或 State：如获取子组件 State 调用方法（FormState.validate）、测量组件位置尺寸。注意：开销较高，同一时刻一个 GlobalKey 只能挂在一个组件上；不要在动态列表项里大量使用，避免状态与位置错乱。",
+    code: {
+      lang: "dart",
+      source: `final _formKey = GlobalKey<FormState>();
+
+void _submit() {
+  // 通过 GlobalKey 拿到子组件的 State 并调用方法
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+  }
+}`,
+    },
+  },
+  {
+    id: "hard-flutter-hot-reload",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "Hot Reload 的实现原理是什么？与 Hot Restart 有何区别？",
+    answer:
+      "Hot Reload 依赖 Dart VM 的 JIT：把更新后的源码编译注入运行中的 VM，保留应用 State，重新执行 build 并 diff 更新渲染树，秒级生效；Hot Restart 则重建整个应用（重新运行 main），State 全部重置，用于修改了初始化逻辑、全局变量等场景。Release 模式无 JIT，不支持热重载。",
+  },
+  {
+    id: "hard-flutter-memory",
+    difficulty: "advanced",
+    topic: "flutter",
+    question: "Flutter 常见的内存问题有哪些？如何排查与优化？",
+    answer:
+      "常见问题：未在 dispose 中取消的监听/定时器/StreamSubscription、全局静态引用大对象、图片未缩略导致缓存膨胀、闭包长期持有 Context、循环引用。优化：dispose 里清理资源、图片设置 cacheWidth/cacheHeight 或缩略图、合理设置 ImageCache 上限、用 DevTools Memory 与 leak_tracker 定位泄漏。",
   },
 ];
