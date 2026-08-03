@@ -1,0 +1,38 @@
+/* 主题变量：亮色 / 暗色 */
+:root {
+  --bg: #f4f6fb;
+  --bg-soft: #eef1f7;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-2: #475569;
+  --text-3: #64748b;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --primary-ink: #1d4ed8;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 10px 30px -12px rgba(15, 23, 42, 0.18);
+  --shadow-lg: 0 24px 60px -20px rgba(15, 23, 42, 0.3);
+  --radius: 8px;
+  --header-h: 68px;
+}
+
+html[data-theme="dark"] {
+  --bg: #0b1220;
+  --bg-soft: #0f172a;
+  --surface: #131c2e;
+  --surface-2: #182338;
+  --border: #26334d;
+  --border-strong: #33415e;
+  --text: #e8edf6;
+  --text-2: #a8b3c7;
+  --text-3: #7d8aa0;
+  --primary: #60a5fa;
+  --primary-soft: #1e293b;
+  --primary-ink: #93c5fd;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px -12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 60px -20px rgba(0, 0, 0, 0.6);
+}

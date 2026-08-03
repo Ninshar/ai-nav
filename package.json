@@ -1,0 +1,12 @@
+{
+  "name": "ai-nav",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI 应用导航站：原生 ES Modules 组件化实现，无构建依赖",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs"
+  }
+}

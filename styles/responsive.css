@@ -1,0 +1,130 @@
+/* 全部响应式断点与无障碍动效偏好 */
+@media (max-width: 920px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 48px 0;
+  }
+
+  .logo-cloud {
+    min-height: auto;
+  }
+
+  .cloud-grid {
+    grid-template-columns: repeat(6, 1fr);
+    max-width: 640px;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .sidebar-block {
+    flex: 1;
+  }
+
+  .cat-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .cat-btn {
+    width: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .app-shell,
+  .topbar-inner {
+    padding: 0 16px;
+  }
+
+  .topbar-inner {
+    gap: 12px;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .search-wrap {
+    max-width: none;
+  }
+
+  .top-actions .primary-btn span {
+    display: none;
+  }
+
+  .top-actions .primary-btn {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .hero {
+    padding: 40px 0;
+  }
+
+  .hero-stats {
+    gap: 22px;
+  }
+
+  .cloud-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .filter-row {
+    width: 100%;
+  }
+
+  .filter-row .sort-label {
+    flex: 1;
+  }
+
+  .filter-row .sort-label select {
+    width: 100%;
+  }
+
+  .sidebar {
+    flex-direction: column;
+  }
+
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal {
+    padding: 22px 18px;
+  }
+
+  .modal-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
