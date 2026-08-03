@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="精选主流 AI 应用与工具，按场景快速找到趁手的 AI 产品。">
+  <title>AI 应用导航</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="#" aria-label="AI 应用导航首页">
+          <span class="brand-mark">
+            <i data-lucide="sparkles"></i>
+          </span>
+          <span class="brand-name">AI 应用导航</span>
+        </a>
+        <div class="search-wrap">
+          <i data-lucide="search" class="search-icon"></i>
+          <input id="searchInput" type="search" placeholder="搜索应用、场景或功能" autocomplete="off">
+          <button class="search-clear" id="clearSearch" aria-label="清空搜索">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="themeToggle" aria-label="切换深浅色模式" title="切换深浅色模式">
+            <i data-lucide="moon" id="themeIcon"></i>
+          </button>
+          <button class="primary-btn" id="submitBtn">
+            <i data-lucide="plus"></i>
+            <span>提交应用</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="hero-eyebrow">Discover · Compare · Use</p>
+          <h1>找到最适合你的 <span class="gradient-text">AI 应用</span></h1>
+          <p class="hero-sub">聚合主流 AI 工具，按对话、编程、设计、办公等场景快速筛选，收藏常用产品。</p>
+          <div class="hero-stats">
+            <div class="stat">
+              <strong id="statTools">0</strong>
+              <span>收录应用</span>
+            </div>
+            <div class="stat">
+              <strong id="statCats">0</strong>
+              <span>使用场景</span>
+            </div>
+            <div class="stat">
+              <strong id="statFeatured">0</strong>
+              <span>本周精选</span>
+            </div>
+          </div>
+        </div>
+        <div class="logo-cloud" aria-label="热门 AI 应用 logo">
+          <div class="cloud-glow"></div>
+          <div class="cloud-grid" id="logoCloud"></div>
+        </div>
+      </section>
+
+      <section class="tool-section" id="toolsSection">
+        <div class="section-head">
+          <div>
+            <h2>全部应用</h2>
+            <p id="resultSummary"></p>
+          </div>
+          <div class="filter-row">
+            <button class="filter-chip active" id="freeToggle" aria-pressed="false">
+              <i data-lucide="badge-check"></i>
+              <span>可用免费</span>
+            </button>
+            <label class="sort-label" for="sortSelect">
+              <i data-lucide="arrow-up-down"></i>
+              <select id="sortSelect">
+                <option value="default">默认排序</option>
+                <option value="rating">评分最高</option>
+                <option value="favs">收藏最多</option>
+                <option value="newest">最新收录</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <aside class="sidebar">
+            <div class="sidebar-block">
+              <div class="sidebar-title">
+                <i data-lucide="layout-grid"></i>
+                <span>分类</span>
+              </div>
+              <nav class="cat-list" id="catList" aria-label="应用分类"></nav>
+            </div>
+            <div class="sidebar-block favorites-block">
+              <div class="sidebar-title">
+                <i data-lucide="bookmark"></i>
+                <span>我的收藏</span>
+              </div>
+              <button class="favorites-toggle" id="favsToggle">
+                <i data-lucide="heart"></i>
+                <span>仅看收藏</span>
+                <b id="favCount">0</b>
+              </button>
+            </div>
+          </aside>
+
+          <div class="tools-panel">
+            <div class="tools-grid" id="toolsGrid"></div>
+            <div class="empty-state" id="emptyState" hidden>
+              <i data-lucide="search-x"></i>
+              <h3>没有找到匹配的应用</h3>
+              <p>换个关键词或分类试试</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>AI 应用导航 · 收录内容仅供学习参考，请以官网信息为准</p>
+      <div class="footer-links">
+        <button class="link-btn" data-scroll="top">返回顶部</button>
+      </div>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="toolModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal">
+      <button class="modal-close" id="modalClose" aria-label="关闭详情">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-head" id="modalHead"></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-foot" id="modalFoot"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="submitModal" role="dialog" aria-modal="true" aria-labelledby="submitTitle" hidden>
+    <div class="modal small">
+      <button class="modal-close" id="submitClose" aria-label="关闭提交表单">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-head">
+        <div class="modal-title-row">
+          <span class="modal-icon"><i data-lucide="send"></i></span>
+          <div>
+            <h3 id="submitTitle">提交应用</h3>
+            <p>告诉我们值得收录的 AI 产品</p>
+          </div>
+        </div>
+      </div>
+      <form id="submitForm" class="submit-form">
+        <label>
+          <span>应用名称</span>
+          <input name="name" type="text" required maxlength="40" placeholder="例如：ChatGPT">
+        </label>
+        <label>
+          <span>官网地址</span>
+          <input name="url" type="url" required placeholder="https://">
+        </label>
+        <label>
+          <span>一句话介绍</span>
+          <textarea name="desc" required maxlength="120" rows="3" placeholder="这个应用主要解决什么问题？"></textarea>
+        </label>
+        <button class="primary-btn wide" type="submit">
+          <i data-lucide="check"></i>
+          <span>提交收录</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
