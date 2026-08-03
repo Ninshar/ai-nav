@@ -1,0 +1,85 @@
+/* 弹窗共享样式（ToolModal / SubmitModal 共用） */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 15, 30, 0.55);
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.16s ease;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  max-height: min(82vh, 760px);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.2s ease;
+  padding: 28px;
+}
+
+.modal.small {
+  max-width: 520px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--text-3);
+  background: var(--surface-2);
+  z-index: 2;
+}
+
+.modal-close:hover {
+  color: var(--text);
+}
+
+.modal-close svg {
+  width: 17px;
+  height: 17px;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-right: 44px;
+  margin-bottom: 20px;
+}
+
+.modal-body p {
+  color: var(--text-2);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.modal-foot {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.modal-foot .primary-btn {
+  flex: 1;
+  justify-content: center;
+}
+
+@media (max-width: 700px) {
+  .modal {
+    padding: 22px 18px;
+  }
+}

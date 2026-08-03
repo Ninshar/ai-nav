@@ -1,12 +1,25 @@
 {
   "name": "ai-nav",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "AI 应用导航站：原生 ES Modules 组件化实现，无构建依赖",
+  "description": "AI 应用导航站：Vite + Vue 3 + TypeScript",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/serve.mjs",
-    "start": "node scripts/serve.mjs",
-    "check": "node scripts/check.mjs"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "vue-tsc --noEmit && vitest run"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.8",
+    "typescript": "^5.9.3",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10",
+    "vue-tsc": "^3.3.9"
+  },
+  "dependencies": {
+    "lucide-vue-next": "^1.0.0",
+    "pinia": "^4.0.2",
+    "vue": "^3.5.40"
   }
 }
