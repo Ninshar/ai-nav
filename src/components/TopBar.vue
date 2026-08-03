@@ -49,6 +49,8 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
       <nav class="top-nav" aria-label="主导航">
         <RouterLink to="/">应用导航</RouterLink>
         <RouterLink to="/models">模型排名</RouterLink>
+        <RouterLink to="/interview">面试题</RouterLink>
+        <RouterLink to="/vibe">Vibe Coding</RouterLink>
       </nav>
 
       <div v-if="isHome" class="search-wrap">
@@ -226,8 +228,10 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
 
 @media (max-width: 700px) {
   .topbar-inner {
-    padding: 0 16px;
-    gap: 12px;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 16px;
+    gap: 10px 12px;
   }
 
   .brand-name {
@@ -235,16 +239,25 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
   }
 
   .top-nav {
+    order: 2;
     gap: 2px;
   }
 
   .top-nav a {
-    padding: 7px 9px;
-    font-size: 13px;
+    padding: 6px 8px;
+    font-size: 12.5px;
   }
 
   .search-wrap {
+    order: 3;
+    flex-basis: 100%;
     max-width: none;
+    margin: 2px 0 0;
+  }
+
+  .top-actions {
+    order: 1;
+    margin-left: auto;
   }
 
   .top-actions .primary-btn span {

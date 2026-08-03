@@ -1,6 +1,6 @@
 # AI 应用导航
 
-一个纯前端 AI 应用导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序、收藏与提交推荐；并内置模型能力排名页，可按综合或专项维度查看大模型榜单。
+一个纯前端 AI 导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序与收藏；内置模型能力排名、前端/Flutter 面试题库（由浅入深）与 Vibe Coding 指南页面。
 
 ## 技术栈
 
@@ -55,6 +55,8 @@ ai-nav/
     ├── views/
     │   ├── HomeView.vue     # 应用导航首页
     │   └── ModelsView.vue   # 模型能力排名页
+    │   ├── InterviewView.vue # 面试题库页（难度/主题筛选 + 手风琴问答）
+    │   └── VibeView.vue     # Vibe Coding 指南页
     └── styles/              # 全局样式
         ├── variables.css    # 主题变量（亮色 / 暗色）
         ├── base.css         # 重置与通用原子类
@@ -101,6 +103,19 @@ ai-nav/
 2. 每条记录包含六个维度分数（`reasoning / coding / writing / multimodal / chinese / value`，0-100），综合得分自动计算；
 3. 如需新增维度，同步更新 `ModelDimension` 类型、`MODEL_DIMENSIONS` 列表与每条记录的 `scores`；
 4. 运行 `npm run check` 校验数据（id 唯一、分数范围、综合排名合理性）。
+
+### 维护面试题
+
+1. 编辑 `src/data/interview.ts` 中的 `INTERVIEW_QUESTIONS`；
+2. 每条记录包含 `difficulty`（基础/进阶/深入）与 `topic`（HTML/CSS、JavaScript、Vue/React、浏览器、工程与性能、Flutter），题目与答案都必填；
+3. 页面默认按难度“由浅入深”排序，新增题目无需调整顺序；
+4. 运行 `npm run check` 校验 id 唯一、难度/主题引用有效。
+
+### 维护 Vibe Coding 指南
+
+1. 编辑 `src/data/vibecoding.ts`：工作流、最佳实践与注意事项均为纯文本数组；
+2. 推荐工具通过 `VIBE_TOOL_IDS` 引用应用数据中的 id，无需重复维护名称与介绍；
+3. 运行 `npm run check` 会校验工具 id 是否存在于 `TOOLS` 中。
 
 ### 状态与组件约定
 
