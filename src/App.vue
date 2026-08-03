@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import TopBar from "./components/TopBar.vue";
-import Hero from "./components/Hero.vue";
-import ToolsSection from "./components/ToolsSection.vue";
 import ToolModal from "./components/ToolModal.vue";
 import SubmitModal from "./components/SubmitModal.vue";
 import Toast from "./components/Toast.vue";
@@ -28,8 +26,7 @@ function scrollToTop() {
   <div class="app-shell">
     <TopBar />
     <main>
-      <Hero />
-      <ToolsSection />
+      <RouterView />
     </main>
 
     <footer class="footer">

@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
+import { router } from "./router";
 import "./styles/variables.css";
 import "./styles/base.css";
 import "./styles/modal.css";
 
-createApp(App).use(createPinia()).mount("#app");
+createApp(App).use(createPinia()).use(router).mount("#app");

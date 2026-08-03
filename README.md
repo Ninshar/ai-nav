@@ -1,11 +1,12 @@
 # AI 应用导航
 
-一个纯前端 AI 应用导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序、收藏与提交推荐。
+一个纯前端 AI 应用导航站：聚合主流 AI 工具，支持按场景筛选、搜索、排序、收藏与提交推荐；并内置模型能力排名页，可按综合或专项维度查看大模型榜单。
 
 ## 技术栈
 
 - [Vite](https://vitejs.dev) + [Vue 3](https://vuejs.org)（组合式 API / SFC）+ [TypeScript](https://www.typescriptlang.org)
 - [Pinia](https://pinia.vuejs.org)：全局状态（筛选、排序、收藏、主题、弹窗）
+- [Vue Router](https://router.vuejs.org)：hash 模式路由（应用导航 / 模型排名）
 - [lucide-vue-next](https://lucide.dev)：图标组件
 - [Vitest](https://vitest.dev)：数据完整性测试
 - GitHub Actions 自动构建并部署到 GitHub Pages
@@ -30,10 +31,13 @@ ai-nav/
 ├── .github/workflows/       # GitHub Actions 自动部署
 └── src/
     ├── main.ts              # 应用入口：挂载 Vue + Pinia + 全局样式
-    ├── App.vue              # 页面骨架：顶栏、首屏、工具区、页脚、弹窗
+    ├── App.vue              # 页面骨架：顶栏、路由视图、页脚、弹窗
+    ├── router/
+    │   └── index.ts         # 路由（hash 模式，兼容 GitHub Pages 刷新）
     ├── data/
     │   ├── types.ts         # Category / Tool 类型定义
     │   ├── categories.ts    # 分类定义
+    │   ├── models.ts        # 模型能力数据与维度定义
     │   ├── index.ts         # 数据聚合出口（TOOLS / CATEGORY_MAP / FREE_PRICING）
     │   ├── __tests__/       # Vitest 数据完整性测试
     │   └── tools/           # 每个分类一个数据文件
@@ -48,6 +52,9 @@ ai-nav/
     │   ├── TopBar.vue / Hero.vue / ToolsSection.vue / Sidebar.vue
     │   ├── ToolGrid.vue / ToolCard.vue / FaviconImg.vue
     │   ├── ToolModal.vue / SubmitModal.vue / Toast.vue
+    ├── views/
+    │   ├── HomeView.vue     # 应用导航首页
+    │   └── ModelsView.vue   # 模型能力排名页
     └── styles/              # 全局样式
         ├── variables.css    # 主题变量（亮色 / 暗色）
         ├── base.css         # 重置与通用原子类
@@ -87,6 +94,13 @@ ai-nav/
 2. 在 `src/data/categories.ts` 追加分类（`key`、`label`、`icon`、`color`）；
 3. 在 `src/utils/icons.ts` 的 `CATEGORY_ICONS` 中映射对应的 lucide 图标组件；
 4. 新建 `src/data/tools/<key>.ts`，并在 `src/data/index.ts` 中引入、合并。
+
+### 维护模型排名
+
+1. 编辑 `src/data/models.ts` 中的 `MODELS` 数组；
+2. 每条记录包含六个维度分数（`reasoning / coding / writing / multimodal / chinese / value`，0-100），综合得分自动计算；
+3. 如需新增维度，同步更新 `ModelDimension` 类型、`MODEL_DIMENSIONS` 列表与每条记录的 `scores`；
+4. 运行 `npm run check` 校验数据（id 唯一、分数范围、综合排名合理性）。
 
 ### 状态与组件约定
 

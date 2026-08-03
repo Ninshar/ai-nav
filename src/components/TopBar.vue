@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { Moon, Plus, Search, Sparkles, Sun, X } from "lucide-vue-next";
 import { useAppStore } from "../stores/app";
 
 const store = useAppStore();
+const route = useRoute();
 const searchInput = ref<HTMLInputElement | null>(null);
+
+const isHome = computed(() => route.path === "/");
 
 function onInput(e: Event) {
   const value = (e.target as HTMLInputElement).value.trim().toLowerCase();
@@ -42,7 +46,12 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
         <span class="brand-name">AI 应用导航</span>
       </a>
 
-      <div class="search-wrap">
+      <nav class="top-nav" aria-label="主导航">
+        <RouterLink to="/">应用导航</RouterLink>
+        <RouterLink to="/models">模型排名</RouterLink>
+      </nav>
+
+      <div v-if="isHome" class="search-wrap">
         <Search class="search-icon" :size="18" />
         <input
           ref="searchInput"
@@ -124,6 +133,32 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
   height: 18px;
 }
 
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.top-nav a {
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+
+.top-nav a:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.top-nav a.router-link-active {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+
 .search-wrap {
   position: relative;
   flex: 1;
@@ -197,6 +232,15 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onGlobalKey));
 
   .brand-name {
     display: none;
+  }
+
+  .top-nav {
+    gap: 2px;
+  }
+
+  .top-nav a {
+    padding: 7px 9px;
+    font-size: 13px;
   }
 
   .search-wrap {
